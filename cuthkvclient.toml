@@ -1,0 +1,12 @@
+[server] # хост и порт которые будут слушаться
+host=""
+port="9090"
+
+[cluster]
+#список адресов хранилищ
+storeList = [
+    "localhost:3090",
+   #"localhost:3091",
+]
+
+statCrawlerTimeout = 60 # интервал сбора статы с хранилищ

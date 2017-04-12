@@ -1,0 +1,12 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "QfNyP58Wby5nuvgr37f7vxct75A=",
+			"path": "github.com/BurntSushi/toml",
+			"revision": ""
+		}
+	],
+	"rootPath": "cuthkv"
+}
