@@ -1,14 +1,14 @@
 # cuthkv
 
-####/get
+#### /get
     получение по ключу элемента из хранилища
     /get?key=111
     
-####/lget
+#### /lget
     получение по ключу элемента из списка
     /lget?key=111&innerkey=12
     
-####/mget
+#### /mget
     получение по ключу элемента из словаря
     /mget?key=111&innerkey=qqq
     
@@ -36,14 +36,14 @@
   "ttl": 12 
 }
 ```
-####/remove
+#### /remove
     удаление из хранилища
     /remove?key=111
     
-####/keys
+#### /keys
     получение ключей из хранилища, по маске pattern
-    /keys?pattern
-####/stat
+    /keys?pattern=pattern
+#### /stat
     простейшая статистика хранилища
 ```json
 {

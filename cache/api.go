@@ -97,6 +97,7 @@ func SetHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest)+err.Error(), http.StatusBadRequest)
 		return
 	}
+	defer r.Body.Close()
 	item := &RequestItem{}
 	err = json.Unmarshal(body, item)
 	if err != nil {
@@ -104,7 +105,9 @@ func SetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, err = c.Set(item.Key, item.Value, int64(item.Ttl))
-
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest)+err.Error(), http.StatusForbidden)
+	}
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"item": item,
 	})

@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"cuthkv/api"
+	"cuthkv/cache"
 	"cuthkv/config"
 	"encoding/json"
 	"hash/fnv"
@@ -14,12 +15,6 @@ import (
 	"sync"
 	"time"
 )
-
-type RequestItem struct {
-	Key   string      `json:"key"`
-	Value interface{} `json:"value"`
-	Ttl   int         `json:"ttl"`
-}
 
 type StatItemType struct {
 	Store string      `json:"store"`
@@ -80,7 +75,7 @@ func newReverseProxy(targets []*url.URL) *httputil.ReverseProxy {
 }
 
 func getKey(r *http.Request) int {
-	item := &RequestItem{}
+	item := &cache.RequestItem{}
 	switch r.Method {
 	case http.MethodPost:
 		item.Key = r.URL.Query().Get("key")
