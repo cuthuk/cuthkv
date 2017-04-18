@@ -177,12 +177,13 @@ func filterKeys(inkeys []string, pattern string) ([]string, error) {
 	out := make(chan string)
 	finished := make(chan bool)
 	wg := &sync.WaitGroup{}
+	compiledRegexp, _ := regexp.Compile(pattern)
 	for i := 0; i < config.Cfg.Options.FilterKeysWorkers; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			for inkey := range in {
-				matched, _ := regexp.MatchString(pattern, inkey)
+				matched := compiledRegexp.MatchString(inkey)
 				if matched {
 					out <- inkey
 				}
