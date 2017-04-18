@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"sync"
 	"time"
+	"sync/atomic"
 )
 
 type (
@@ -23,9 +24,9 @@ type (
 		store     map[string]CacheItem
 		gcTimeout time.Duration
 		lock      sync.RWMutex
-		cntGcCall uint
-		cntHit    uint
-		cntMissed uint
+		cntGcCall uint32
+		cntHit    uint32
+		cntMissed uint32
 	}
 
 	Cacher interface {
@@ -68,7 +69,7 @@ func (c *Cache) timeoutGC() time.Duration {
 
 func (c *Cache) GC() {
 	c.lock.Lock()
-	c.cntGcCall++
+	atomic.AddUint32(&c.cntGcCall,1)
 	var key string
 	var item CacheItem
 	for key, item = range c.store {
@@ -89,9 +90,9 @@ func gc(c GCCacher) {
 func (c *Cache) Stat() map[string]interface{} {
 	c.lock.RLock()
 	stat := map[string]interface{}{
-		"hit":    c.cntHit,
-		"missed": c.cntMissed,
-		"gcCall": c.cntGcCall,
+		"hit":    atomic.LoadUint32(&c.cntHit),
+		"missed": atomic.LoadUint32(&c.cntMissed),
+		"gcCall": atomic.LoadUint32(&c.cntGcCall),
 	}
 	c.lock.RUnlock()
 	stat["len"] = c.Len()
@@ -99,12 +100,12 @@ func (c *Cache) Stat() map[string]interface{} {
 }
 
 func (c *Cache) find(key string) (item CacheItem, found bool) {
-	c.cntHit++
+	atomic.AddUint32(&c.cntHit,1)
 	c.lock.RLock()
 	item, found = c.store[key]
 	c.lock.RUnlock()
 	if !found {
-		c.cntMissed++
+		atomic.AddUint32(&c.cntMissed,1)
 	}
 
 	return
